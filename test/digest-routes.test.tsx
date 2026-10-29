@@ -39,6 +39,7 @@ describe('digest routes', () => {
         { job: 'zeta', owner: null, runs: 1, retries: 0, lastStatus: 'fail', lastError: 'disk full', firstAt: '2026-10-28T22:00:00-04:00', lastAt: '2026-10-28T22:00:00-04:00' },
       ],
       badLines: 1,
+      counts: { ok: 1, retry: 3, fail: 1 },
     });
 
     const html = await htmlResponse.text();
@@ -57,10 +58,12 @@ describe('digest routes', () => {
     expect(alphaCells).toContain('4');
     expect(alphaCells).toContain('3');
     expect(rows[alpha]).toMatch(/\bok\b/);
+    expect(rows[alpha]).toMatch(/<td\b[^>]*class=["']warn["'][^>]*>\s*3\s*<\/td>/i);
     expect(rows[zeta]).toContain('—');
     expect(rows[zeta]).toContain('disk full');
     expect(rows[zeta]).toContain('2026-10-28T22:00:00-04:00');
     expect(rows[zeta]).toMatch(/\bfail\b/);
+    expect(rows[zeta]).toMatch(/<td\b[^>]*class=["']warn["'][^>]*>\s*fail\s*<\/td>/i);
     expect(html).toMatch(/(?:bad|invalid|malformed|skipped)[\s\S]{0,80}1|1[\s\S]{0,80}(?:bad|invalid|malformed|skipped)/i);
   });
 
@@ -76,6 +79,6 @@ describe('digest routes', () => {
     expect(htmlResponse.status).toBe(200);
     expect(await htmlResponse.text()).toMatch(/nothing ran/i);
     expect(jsonResponse.status).toBe(200);
-    expect(await jsonResponse.json()).toEqual({ rows: [], badLines: 0 });
+    expect(await jsonResponse.json()).toEqual({ rows: [], badLines: 0, counts: { ok: 0, retry: 0, fail: 0 } });
   });
 });
