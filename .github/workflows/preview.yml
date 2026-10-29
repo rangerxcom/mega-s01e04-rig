@@ -1,0 +1,54 @@
+name: Publish preview
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/configure-pages@v5
+      - name: Export digest
+        env:
+          LANE_MARKER: ${{ secrets.LANE_MARKER }}
+        run: |
+          pnpm start > /dev/null 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --silent --fail http://localhost:8787/health > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --silent --fail http://localhost:8787/health > /dev/null
+          mkdir -p "$RUNNER_TEMP/preview"
+          curl --silent --fail http://localhost:8787/digest/2026-10-28 -o "$RUNNER_TEMP/preview/index.html"
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/preview
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
