@@ -1,6 +1,6 @@
 ---
 plan: morning-digest
-status: ready
+status: done
 owner: rook
 opened: 2026-10-29
 ---
@@ -77,3 +77,19 @@ page again with `LANE_MARKER` unset (the banner reads "no marker set") and uploa
 link. Move this plan to `docs/plans/done/` with its issue list.
 
 Done when: the preview link no longer shows the lane marker.
+
+## Issues
+
+- [#1 Digest contract](https://github.com/rangerxcom/mega-s01e04-rig/issues/1)
+- [#2 Run log reader](https://github.com/rangerxcom/mega-s01e04-rig/issues/2)
+- [#3 Digest page: GET /digest/:night](https://github.com/rangerxcom/mega-s01e04-rig/issues/3)
+- [#4 JSON digest: GET /api/digest/:night](https://github.com/rangerxcom/mega-s01e04-rig/issues/4)
+- [#5 Status board digest links](https://github.com/rangerxcom/mega-s01e04-rig/issues/5)
+- [#6 Digest route tests](https://github.com/rangerxcom/mega-s01e04-rig/issues/6)
+- [#7 Public HTML preview for review](https://github.com/rangerxcom/mega-s01e04-rig/issues/7)
+- [#8 Remove preview marker and archive plan](https://github.com/rangerxcom/mega-s01e04-rig/issues/8)
+
+## Preview verification
+
+After review, the preview at https://rangerxcom.github.io/mega-s01e04-rig/ was replaced at the
+same link. Fetching it showed "no marker set" and no original lane marker.
