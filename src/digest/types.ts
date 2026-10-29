@@ -20,7 +20,9 @@ export type DigestRow = {
  * Synchronously read runsDir/<night>.jsonl (night is YYYY-MM-DD).
  * The implementation exports readNight from src/digest/reader.ts.
  *
- * Return null for a missing file. An empty file returns { rows: [], badLines: 0 }.
+ * Return null for a missing file. An empty file returns
+ * { rows: [], badLines: 0, counts: { ok: 0, retry: 0, fail: 0 } }.
+ * Counts include every valid event, not just each job's last status.
  * Ignore blank lines; count each malformed JSON or invalid event line in badLines
  * and continue reading. A valid event has at (a timestamp with an offset), job
  * (string), status (ok | retry | fail), owner (string | null), and optional error
@@ -33,4 +35,8 @@ export type DigestRow = {
 export type ReadNight = (
   runsDir: string,
   night: string,
-) => { rows: DigestRow[]; badLines: number } | null;
+) => {
+  rows: DigestRow[];
+  badLines: number;
+  counts: { ok: number; retry: number; fail: number };
+} | null;
